@@ -1,6 +1,7 @@
 package com.example.appetite
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -55,7 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.TextStyle
 
-val recipies = listOf(
+val recipies = arrayListOf(
     Recipe(
         image = R.drawable.pasta_recipe,
         difficulty = Easy.Dif,
@@ -114,7 +115,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             AppetiteTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    ScrollableHomeScreen(modifier = Modifier.padding(innerPadding))
+                    ScrollableHomeScreen(modifier = Modifier.padding(innerPadding) , onclick = {
+                        Toast.makeText(this, "Upcoming", Toast.LENGTH_SHORT).show()
+                    })
                 }
             }
         }
@@ -122,7 +125,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableHomeScreen( modifier: Modifier = Modifier) {
+fun ScrollableHomeScreen( modifier: Modifier = Modifier , onclick :() -> Unit) {
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
             Color(0xFFffc993),
@@ -159,13 +162,14 @@ fun ScrollableHomeScreen( modifier: Modifier = Modifier) {
 
         item {
             Row(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(0.dp), // No need for start/end padding if applied to LazyColumn
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                MyButton(imageVector = Icons.Default.FavoriteBorder , title = "Favourites")
-                MyButton(imageVector = ImageVector.vectorResource(R.drawable.baseline_fastfood_24) , title = "Categories")
-                MyButton(imageVector = Icons.Default.AccountCircle , title = "Profile")
+                MyButton(imageVector = Icons.Default.FavoriteBorder , title = "Favourites" , onclick = onclick)
+                MyButton(imageVector = ImageVector.vectorResource(R.drawable.baseline_fastfood_24) , title = "Categories" , onclick = onclick)
+                MyButton(imageVector = Icons.Default.AccountCircle , title = "Profile" , onclick = onclick)
             }
         }
         item { Spacer(modifier = Modifier.height(35.dp)) }
@@ -192,10 +196,11 @@ fun ScrollableHomeScreen( modifier: Modifier = Modifier) {
     }
 }
 @Composable
-fun MyButton(modifier: Modifier = Modifier , imageVector : ImageVector , title : String){
+fun MyButton(modifier: Modifier = Modifier , imageVector : ImageVector , title : String , onclick : () -> Unit){
     Button(
-        onClick = {},
-        modifier = modifier.width(100.dp)
+        onClick = onclick,
+        modifier = modifier
+            .width(100.dp)
             .height(85.dp),
             shape = RoundedCornerShape(10.dp),
             contentPadding = PaddingValues(start = 0.dp , end = 0.dp),
@@ -209,8 +214,9 @@ fun MyButton(modifier: Modifier = Modifier , imageVector : ImageVector , title :
 
 
     ){
-        Column(modifier = modifier.fillMaxSize()
-            .padding(top = 10.dp , bottom = 10.dp)
+        Column(modifier = modifier
+            .fillMaxSize()
+            .padding(top = 10.dp, bottom = 10.dp)
         ) {
             Spacer(modifier = modifier.height(7.dp))
             Row(
@@ -263,7 +269,7 @@ fun DifficultyTag(difficulty: String , color: Color) {
 @Composable
 fun ItemCard(modifier: Modifier = Modifier, Title : String , Description : String , backgroundColor : Color = Color(0xFFFFFAF2) , image: Int , difficulty: String , difficultycolor: Color){
     Card(modifier
-        .padding(top = 10.dp , start = 10.dp , end = 10.dp , bottom = 30.dp)
+        .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 30.dp)
         .fillMaxWidth()
         .height(250.dp)
         .clip(RoundedCornerShape(20.dp))    , colors = CardDefaults.cardColors(
@@ -280,7 +286,12 @@ fun ItemCard(modifier: Modifier = Modifier, Title : String , Description : Strin
                 .height(200.dp)
                 .weight(3f)
                 // Clip only the top corners
-                .clip(RoundedCornerShape(20.dp).copy(bottomStart = CornerSize(0.dp), bottomEnd = CornerSize(0.dp)))
+                .clip(
+                    RoundedCornerShape(20.dp).copy(
+                        bottomStart = CornerSize(0.dp),
+                        bottomEnd = CornerSize(0.dp)
+                    )
+                )
         ) {
             // In a real app, replace `painterResource` with an async image loader (like Coil)
             // that fetches an image URL. Using a placeholder image for this example.
@@ -339,7 +350,8 @@ fun ItemCard(modifier: Modifier = Modifier, Title : String , Description : Strin
 @Composable
 fun ScrollableHomeScreenPreview() {
     AppetiteTheme {
-        ScrollableHomeScreen()
+        ScrollableHomeScreen(onclick = {
+        })
     }
 }
 //@Preview(showBackground = true)
