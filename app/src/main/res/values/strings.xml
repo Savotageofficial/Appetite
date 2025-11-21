@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Appetite</string>
+    <string name="title_activity_recipe_detail">RecipeDetail</string>
 </resources>
