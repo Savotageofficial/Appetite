@@ -1,5 +1,6 @@
 package com.example.appetite
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -8,6 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -117,7 +119,12 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     ScrollableHomeScreen(modifier = Modifier.padding(innerPadding) , onclick = {
                         Toast.makeText(this, "Upcoming", Toast.LENGTH_SHORT).show()
-                    })
+                    },
+                        onCardClick = {
+                            val intent = Intent(this , RecipeDetail::class.java)
+                            startActivity(intent)
+                        }
+                    )
                 }
             }
         }
@@ -125,7 +132,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun ScrollableHomeScreen( modifier: Modifier = Modifier , onclick :() -> Unit) {
+fun ScrollableHomeScreen( modifier: Modifier = Modifier , onclick :() -> Unit , onCardClick: () -> Unit) {
     val gradientBackground = Brush.verticalGradient(
         colors = listOf(
             Color(0xFFffc993),
@@ -190,7 +197,8 @@ fun ScrollableHomeScreen( modifier: Modifier = Modifier , onclick :() -> Unit) {
                 Description = item.Description,
                 image = item.image,
                 difficulty = item.difficulty, // Use item's difficulty, not always Easy.Dif
-                difficultycolor = item.difficultycolor // Use item's color, not always Easy.color
+                difficultycolor = item.difficultycolor, // Use item's color, not always Easy.color,
+                onclick = onCardClick
             )
         }
     }
@@ -267,14 +275,23 @@ fun DifficultyTag(difficulty: String , color: Color) {
     }
 }
 @Composable
-fun ItemCard(modifier: Modifier = Modifier, Title : String , Description : String , backgroundColor : Color = Color(0xFFFFFAF2) , image: Int , difficulty: String , difficultycolor: Color){
+fun ItemCard(modifier: Modifier = Modifier,
+             Title : String , Description : String ,
+             backgroundColor : Color = Color(0xFFFFFAF2) ,
+             image: Int ,
+             difficulty: String ,
+             difficultycolor: Color,
+             onclick: () -> Unit
+){
     Card(modifier
         .padding(top = 10.dp, start = 10.dp, end = 10.dp, bottom = 30.dp)
         .fillMaxWidth()
+        .clickable(onClick = onclick)
         .height(250.dp)
         .clip(RoundedCornerShape(20.dp))    , colors = CardDefaults.cardColors(
         containerColor = backgroundColor
     ),
+
         elevation = CardDefaults.cardElevation(50.dp),
 
 
@@ -350,8 +367,8 @@ fun ItemCard(modifier: Modifier = Modifier, Title : String , Description : Strin
 @Composable
 fun ScrollableHomeScreenPreview() {
     AppetiteTheme {
-        ScrollableHomeScreen(onclick = {
-        })
+        ScrollableHomeScreen(onclick = {},
+            onCardClick = {})
     }
 }
 //@Preview(showBackground = true)
